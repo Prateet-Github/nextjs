@@ -1,17 +1,3 @@
-// import { NextAuthOptions } from "next-auth";
-// import GithubProvider from "next-auth/providers/github";
-
-// export const authOptions: NextAuthOptions = {
-//   providers: [
-//     GithubProvider({
-//       clientId: process.env.GITHUB_ID!,
-//       clientSecret: process.env.GITHUB_SECRET!,
-//     }),
-//     // ...add more providers here like Google, Facebook, etc.
-//   ],
-
-// }
-
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "./db";
@@ -24,11 +10,11 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "passsword" },
+        password: { label: "Password", type: "password" }, // ✅ Fixed typo: "passsword" -> "password"
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing email or passsword");
+          throw new Error("Missing email or password"); // ✅ Fixed typo: "passsword" -> "password"
         }
 
         try {
@@ -36,16 +22,16 @@ export const authOptions: NextAuthOptions = {
           const user = await User.findOne({ email: credentials.email });
 
           if (!user) {
-            throw new Error("No user found with this");
+            throw new Error("No user found with this email"); // ✅ Added "email" to complete message
           }
 
           const isValid = await bcrypt.compare(
             credentials.password,
-            user.passsword
+            user.password // ✅ Fixed typo: "passsword" -> "password"
           );
 
           if (!isValid) {
-            throw new Error("invalid password");
+            throw new Error("Invalid password"); // ✅ Fixed capitalization
           }
 
           return {
